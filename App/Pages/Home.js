@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet, TextInput } from "react-native";
 import NormalButton from "../components/NormalButton";
+import NormalInput from "../components/NormalInput";
 
 const Home = () => {
   return (
@@ -8,16 +9,16 @@ const Home = () => {
       <Text style={styles.gametitle}>Airpong</Text>
 
       <View style={styles.container2}>
-        <NormalButton title="Lancer la partie" />
+        <NormalButton title="Lancer la recherche" />
 
         <Text>ou</Text>
 
-        <TextInput placeholder="Rentrer un code ami" />
+        <NormalInput placeholder="Rentrer un code ami" />
 
         <Text>Votre code ami : 85468</Text>
       </View>
 
-      <TextInput placeholder="Votre nom" />
+      <NormalInput placeholder="Votre nom" />
     </View>
   );
 };
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
     marginBottom: 75,
   },
   gametitle: {
-    color: "#FF6C6C",
+    color: "#EE8383",
     fontSize: 90,
   },
 });
