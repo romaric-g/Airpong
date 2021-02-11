@@ -116,7 +116,8 @@ const styles = StyleSheet.create({
     gametitle: {
       color: "#EE8383",
       fontSize: 90,
-    },
+      fontFamily: "Arciform Sans Normal"
+    }, 
     input: {
         backgroundColor: "#FFE1E1",
         borderRadius: 15,
