@@ -4,7 +4,7 @@ import { View, StyleSheet, Pressable, Text } from "react-native";
 
 interface Props {
   title: string,
-  onPress: () => void
+  onPress?: () => void
 }
 
 const NormalButtonWhite = ({title, onPress}: Props) => {

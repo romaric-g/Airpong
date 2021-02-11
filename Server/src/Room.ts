@@ -58,13 +58,16 @@ export default class Room {
     }
 
     start() {
-        console.log(this)
+        console.log("start")
         if (!this.started && this.players.length >= 2) {
-            this.game = new Game(this);
+            console.log("start ok")
             this.started = true;
+            this.game = new Game(this);
+            this.game.start();
             this.dispatchEvent<Models.RoomStartEvent>("RoomStart", () => ({
                 code: this.code
-            }))
+            }));
+            this.dispatchNewRoomInfo();
             this.dispatchNewGameState();
             return true;
         } else {
@@ -81,6 +84,7 @@ export default class Room {
     }
 
     dispatchNewGameState() {
+        console.log("DISPATCH GAME STATE")
         this.dispatchEvent<Models.GameStateChangeEvent>("GameStateChange", ({ playerID }) => (
             {
                 state: this.game.getState(playerID)
@@ -122,17 +126,17 @@ export default class Room {
 
     tryAutoStart () {
         const startTimer = (start: number) => {
-            if (start) this.startTimer = start;
+            if (start) this.startTimer = start + 1;
             if (this.canAutoStart()) {
                 if (this.startTimer !== undefined) {
                     console.log(this.startTimer)
                     this.startTimer--;
                     if (this.startTimer > 0) {
                         setTimeout(startTimer, 1000);
+                        this.dispatchNewRoomInfo();
                     } else {
                         this.start();
                     }
-                    this.dispatchNewRoomInfo();
                 }
             } else {
                 this.startTimer = undefined;
@@ -141,7 +145,7 @@ export default class Room {
         console.log(this.canAutoStart(), "OUI")
         console.log(this.startTimer)
         if (this.startTimer === undefined && this.canAutoStart()) {
-            startTimer(5);
+            startTimer(1);
         }
     }
 }

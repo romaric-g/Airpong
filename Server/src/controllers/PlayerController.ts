@@ -117,6 +117,7 @@ class PlayerController {
             room.getGame().play(params.action, this.player);
             callback({ success: true})
          } catch (error) {
+            console.log(error)
             callback({ success: false, message: error });
          }
       } else {

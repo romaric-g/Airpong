@@ -1,4 +1,4 @@
-import { Action } from "../Game";
+import { Action, FEEDBACK } from "../Game";
 
 declare namespace Models {
 
@@ -34,6 +34,9 @@ declare namespace Models {
     tFDuration: number,
     failed: boolean,
     score: number[],
+    feedback: FEEDBACK | undefined,
+    action: Action | undefined,
+    playersName: (string | undefined)[],
     win?: WinState,
     leave?: boolean
   }
@@ -53,8 +56,10 @@ declare namespace Models {
     settings: PlayerSettings
   }
 
+  type PlayActions = "smatch" | "revers" | "droit" | "serv";
+
   interface PlayParams {
-    action: Action
+    action: PlayActions
   }
 
 
