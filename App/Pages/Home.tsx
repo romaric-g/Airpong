@@ -1,17 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
+import { useHistory } from 'react-router';
 import NormalButton from '../Components/NormalButton';
 import socket from '../connection'
 import Models from '../Types/models';
 
 const Home = () => {
 
-    const [ username, setUsername ] = useState('');
+    const [ username, setUsername ] = useState('default');
 
     const [ codeInput, setCodeInput ] = useState('');
 
     const [ roomInfo, setRoomInfo ] = useState<Models.RoomInfo>()
 
+    const history = useHistory();
 
     const joinPrivate = useCallback(() => {
         console.log('JOIN PRIVATE')
@@ -47,6 +49,12 @@ const Home = () => {
             name: username
         } as Models.PlayerSettings, () => {});
     }, [username])
+
+    useEffect(() => {
+        if (roomInfo?.start) {
+            history.push('/game')
+        }
+    }, [roomInfo])
 
     const roomInfoChange = useCallback((event: Models.RoomInfoChangeEvent) => {
         setRoomInfo(event.info)
@@ -89,7 +97,11 @@ const Home = () => {
                 </View>
             ) : (
                 <View>
-                    <Text>La partie est prete à se lancer</Text>
+                    { roomInfo.startTimer !== undefined ? (
+                        <Text>Début dans { roomInfo.startTimer }</Text>
+                    ) : (
+                        <Text>La partie est prete à se lancer</Text>
+                    )}
                     <Text>J1: { roomInfo.playersName[0] }</Text>
                     <Text>J2: { roomInfo.playersName[1] }</Text>
                 </View>

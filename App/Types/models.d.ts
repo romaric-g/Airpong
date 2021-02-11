@@ -1,3 +1,4 @@
+import { Action } from "../Game";
 
 declare namespace Models {
 
@@ -21,24 +22,24 @@ declare namespace Models {
     alone: boolean,
     playersName: (string | undefined)[],
     code: string,
+    startTimer?: number,
+    start: boolean
   }
 
   interface GameState {
-    me: 0 | 1 | 2 ,
-    currentPlayer: number,
-    player1?: PlayerInfo,
-    player2?: PlayerInfo,
-    grid: number[][],
-    lastPlacement: { x: number, y: number } | null,
+    nextStriker: string | undefined,
+    server: string | undefined,
+    tBStart: number,
+    tBDuration: number,
+    tFDuration: number,
+    failed: boolean,
     score: number[],
     win?: WinState,
     leave?: boolean
   }
 
   interface WinState {
-    points: { x: number, y: number }[] | null,
-    winnerID: string | null,
-    scoreAdded: number
+    winnerID: string | null
   }
 
   /* Params */
@@ -53,7 +54,7 @@ declare namespace Models {
   }
 
   interface PlayParams {
-    column: number
+    action: Action
   }
 
 
@@ -78,8 +79,6 @@ declare namespace Models {
   }
 
   interface RoomInfoChangeEvent {
-    reason: "kick" | "join" | "leave",
-    playerName: string | undefined,
     info: RoomInfo
   }
 
