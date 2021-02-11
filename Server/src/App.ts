@@ -28,7 +28,7 @@ class App {
     const router = express.Router()
     router.get('/', (req, res) => {
       res.json({
-        message: 'Hello World 2!'
+        message: 'Airpong API'
       })
     })
     this.express.use('/', router)

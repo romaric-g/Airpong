@@ -1,39 +1,36 @@
 import Models from "./types/models";
 import Player from "./Player";
 import RoomManager from "./RoomManager";
-import Grid from "./Grid";
+import Game from "./Game";
 
 export default class Room {
     public readonly code: string;
-    public grid: Grid;
+    public game: Game;
     private players: Player[];
-    private player1: Player | undefined = undefined;
-    private player2: Player | undefined = undefined;
-    private isStart = false;
-    private score = [0,0];
-    private win: Models.WinState | undefined = undefined;
+    private started = false;
+    private startTimer: number | undefined;
 
     constructor(code: string) {
         this.code = code;
         this.players = [];
-        this.grid = new Grid(this);
+        this.game = new Game(this);
     }
 
     join(player: Player) : boolean {
         if (this.players.length >= 2) {
             return false;
         }
-        if (player.room) {
+        if (this.players.includes(player)) {
+            return false;
+        }
+        if (player.getRoom()) {
             player.onLeave();
         }
         this.players.push(player);
         player.setRoom(this);
 
-        this.dispatchEvent<Models.RoomPlayerListChangeEvent>("RoomPlayerListChange", () => ({
-            reason: "join",
-            playerName: player.name,
-            playersName: this.getPlayersName()
-        }))
+        this.dispatchNewRoomInfo();
+        this.tryAutoStart()
         return true;
     }
 
@@ -44,17 +41,16 @@ export default class Room {
             RoomManager.deleteRoom(this)
         }
 
-        this.dispatchEvent<Models.RoomPlayerListChangeEvent>("RoomPlayerListChange", () => ({
-            reason: "leave",
-            playerName: player.name,
-            playersName: this.getPlayersName()
-        }))
-
+        this.dispatchNewRoomInfo();
         this.dispatchNewGameState();
     }
 
     onDelete() {
         this.players.forEach((p) => p.setRoom(null))
+    }
+
+    getPlayers() {
+        return this.players;
     }
 
     getPlayersName() {
@@ -63,12 +59,9 @@ export default class Room {
 
     start() {
         console.log(this)
-        if (!this.isStart && this.players.length >= 2) {
-            this.grid = new Grid(this);
-            this.isStart = true;
-            this.player1 = this.players[0];
-            this.player2 = this.players[1];
-            this.win = undefined;
+        if (!this.started && this.players.length >= 2) {
+            this.game = new Game(this);
+            this.started = true;
             this.dispatchEvent<Models.RoomStartEvent>("RoomStart", () => ({
                 code: this.code
             }))
@@ -90,52 +83,65 @@ export default class Room {
     dispatchNewGameState() {
         this.dispatchEvent<Models.GameStateChangeEvent>("GameStateChange", ({ playerID }) => (
             {
-                state: this.getStateInfo(
-                    playerID === this.player1?.id ? 1 : 2
-                )
+                state: this.game.getState(playerID)
             }
         ))
     }
 
-    getStateInfo (me: 0 | 1 | 2) : Models.GameState {
-        return {
-            me: me,
-            currentPlayer: this.grid.currentPlayerNumber,
-            grid: this.grid.points,
-            lastPlacement: this.grid.lastPlacement,
-            player1: this.player1?.toInfo(),
-            player2: this.player2?.toInfo(),
-            score: this.score,
-            win: this.win,
-            leave: this.players.length < 2
-        }
-    }
-
-
-    getPlayerNumber (player: Player) {
-        if ( this.player1 === player) return 1;
-        if ( this.player2 === player) return 2;
-        return 0;
-    }
-
-    
-    setWin (win: Models.WinState) {
-        this.win = win;
-        this.isStart = false;
-    }
-
-    addScore (playerNumber: 1 | 2, scoreAdded: number) {
-        this.score[playerNumber-1] = this.score[playerNumber-1] + scoreAdded;
-    }
-
-    sendEmote (emoteID: number, player: Player) {
-        this.dispatchEvent<Models.NewEmoteSendedEvent>('NewEmoteSended', () => ({
-            senderID: player.id,
-            emoteID: emoteID
+    dispatchNewRoomInfo() {
+        this.dispatchEvent<Models.RoomInfoChangeEvent>("RoomInfoChange", () => ({
+            info: this.toInfo()
         }))
     }
 
-    isState () {
-        return this.isStart;
+    isStart () {
+        return this.started;
+    }
+
+    alone () {
+        return this.players.length === 1;
+    }
+
+    toInfo() : Models.RoomInfo {
+        return {
+            alone: this.alone(),
+            playersName: this.getPlayersName(),
+            code: this.code,
+            start: this.started,
+            startTimer: this.startTimer
+        }
+    }
+
+    getGame() {
+        return this.game;
+    }
+
+    canAutoStart () {
+        return this.players.length === 2;
+    }
+
+    tryAutoStart () {
+        const startTimer = (start: number) => {
+            if (start) this.startTimer = start;
+            if (this.canAutoStart()) {
+                if (this.startTimer !== undefined) {
+                    console.log(this.startTimer)
+                    this.startTimer--;
+                    if (this.startTimer > 0) {
+                        setTimeout(startTimer, 1000);
+                    } else {
+                        this.start();
+                    }
+                    this.dispatchNewRoomInfo();
+                }
+            } else {
+                this.startTimer = undefined;
+            }
+        }
+        console.log(this.canAutoStart(), "OUI")
+        console.log(this.startTimer)
+        if (this.startTimer === undefined && this.canAutoStart()) {
+            startTimer(5);
+        }
     }
 }

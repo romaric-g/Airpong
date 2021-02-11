@@ -44,26 +44,16 @@ class PlayerController {
       }
    }
 
-   initUser (params: Models.InitUserParams, callback: (res: Models.InitUserResponse) => void) {
-      this.player.setName(params.settings.name);
-      if(!this.player.name) {
-         return callback({
-            success: false,
-            message: "Vous n'avez pas indiqué votre pseudo"
-         })
-      }
-      const room = RoomManager.createRoom(this.player);
-      callback({
-         success: true,
-         code: room.code
-      });
+   updateName (params: Models.PlayerSettings, callback: (res: Models.SocketResponse) => void) {
+      this.player.setName(params.name)
+      callback({ success: true })
    }
 
-
-   updateName (params: Models.PlayerSettings, callback: (res: Models.SocketResponse) => void) {
-      if (params.name) {
-         this.player.setName(params.name)
-      }
+   getPlayerInfo (params: null, callback: (res: Models.GetPlayerInfoResponse) => void) {
+      callback({
+         playerInfo: this.player.toInfo(),
+         success: true
+      })
    }
 
    getRoomInfo (params: null, callback: (res: Models.GetRoomInfoResponse) => void) {
@@ -71,13 +61,12 @@ class PlayerController {
       if (room) {
          callback({
             success: true,
-            playersName: room.getPlayersName()
+            roomInfo: room.toInfo()
          })
       } else {
          callback({
             success: false,
-            message: "Vous n'avez pas rejoint de partie",
-            playersName: []
+            message: "Vous n'avez pas rejoint de partie"
          })
       }
    }
@@ -87,7 +76,7 @@ class PlayerController {
       if (room) {
          callback({
             success: true,
-            state: room.getStateInfo(room.getPlayerNumber(this.player))
+            state: room.getGame().getState(this.player.id)
          })
       }else {
          callback({
@@ -125,7 +114,7 @@ class PlayerController {
       const room = this.player.getRoom();
       if (room) {
          try {
-            room.grid.play(params.column, this.player);
+            room.getGame().play(params.action, this.player);
             callback({ success: true})
          } catch (error) {
             callback({ success: false, message: error });
@@ -135,14 +124,6 @@ class PlayerController {
             success: false,
             message: "Vous n'avez pas rejoint de partie"
          });
-      }
-   }
-
-   sendEmote (params: Models.SendEmoteParams, callback: (res: Models.SocketResponse) => void) {
-      const room = this.hasRoomAndGet(callback);
-      if (room) {
-         room.sendEmote(params.emoteID, this.player);
-         callback({ success: true})
       }
    }
 
