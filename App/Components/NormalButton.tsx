@@ -1,9 +1,16 @@
 import React from "react";
 import { View, StyleSheet, Pressable, Text } from "react-native";
 
-const NormalButton = (text) => {
+
+interface Props {
+  title: string,
+  onPress: () => void
+}
+
+const NormalButton = ({title, onPress}: Props) => {
   return (
     <Pressable
+      onPress={onPress}
       style={({ pressed }) => [
         {
           backgroundColor: pressed ? "#FFA8A8" : "#EE8383",
@@ -11,7 +18,7 @@ const NormalButton = (text) => {
         styles.wrapperCustom,
       ]}
     >
-      <Text style={styles.text}>{text.title}</Text>
+      <Text style={styles.text}>{title}</Text>
     </Pressable>
   );
 };

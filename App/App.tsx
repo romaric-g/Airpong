@@ -9,16 +9,16 @@ const App = () => {
   const history = useHistory();
 
   return (
-    <NativeRouter style={styles.bgapp}>
+    <NativeRouter>
       <StatusBar hidden />
-      <View style={styles.nav}>
-        <Link to="/" underlayColor="#f0f4f7" style={styles.navItem}>
+      <View>
+        <Link to="/" underlayColor="#f0f4f7">
           <Text>room</Text>
         </Link>
-        <Link to="/room" underlayColor="#f0f4f7" style={styles.navItem}>
+        <Link to="/room" underlayColor="#f0f4f7">
           <Text>Room</Text>
         </Link>
-        <Link to="/game" underlayColor="#f0f4f7" style={styles.navItem}>
+        <Link to="/game" underlayColor="#f0f4f7">
           <Text>Game</Text>
         </Link>
       </View>

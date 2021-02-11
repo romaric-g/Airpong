@@ -4,7 +4,8 @@ import { View, Text } from 'react-native';
 const Room = () => {
     return (
         <View>
-            <Text>Room</Text>
+            <Text>USER 1</Text>
+            <Text>USER 2</Text>
         </View>
     )
 }
