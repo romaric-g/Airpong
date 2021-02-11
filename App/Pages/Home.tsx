@@ -84,7 +84,7 @@ const Home = () => {
                         style={styles.input}
                     />
               
-                    <Text>Votre code: {roomInfo?.code || 'en attente...'}</Text>
+                    <Text>Votre code : {roomInfo?.code || 'En attente...'}</Text>
 
                     <Text>Username</Text>
                     <TextInput 
@@ -128,13 +128,14 @@ const styles = StyleSheet.create({
     gametitle: {
       color: "#EE8383",
       fontSize: 90,
-    },
+      fontFamily: "Arciform Sans Normal"
+    }, 
     input: {
         backgroundColor: "#FFE1E1",
         borderRadius: 15,
-        paddingTop: 20,
+        paddingTop: 10,
         paddingRight: 50,
-        paddingBottom: 20,
+        paddingBottom: 10,
         paddingLeft: 50,
     },
   });

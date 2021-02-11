@@ -13,7 +13,7 @@ const App = () => {
       <StatusBar hidden />
       <View>
         <Link to="/" underlayColor="#f0f4f7">
-          <Text>room</Text>
+          <Text>Home</Text>
         </Link>
         <Link to="/room" underlayColor="#f0f4f7">
           <Text>Room</Text>
