@@ -7,7 +7,7 @@ import socket from "../connection";
 import Models from "../Types/models";
 
 const Home = () => {
-  const [username, setUsername] = useState("Défaut");
+  const [username, setUsername] = useState("");
 
   const [codeInput, setCodeInput] = useState("");
 
@@ -83,19 +83,20 @@ const Home = () => {
           ou
         </Text>
 
-        <TextInput
-          placeholder="Rentrer un code ami"
-          value={codeInput}
-          onChangeText={(text) => setCodeInput(text.toUpperCase())}
-          autoCapitalize="characters"
-          maxLength={6}
-          onSubmitEditing={joinPrivate}
-          style={styles.input}
-        />
+        <View style={{alignItems: "center"}}>
+            <TextInput
+              placeholder="Rentrer un code ami"
+              value={codeInput}
+              onChangeText={(text) => setCodeInput(text.toUpperCase())}
+              autoCapitalize="characters"
+              maxLength={6}
+              onSubmitEditing={joinPrivate}
+              style={styles.input}
+            />
+    
+            <Text style={{fontFamily: "Arciform", color: "#a5a5a5"}}>Votre code : {roomInfo?.code || "En attente..."}</Text>
+        </View>
 
-        <Text style={{fontFamily: "Arciform",}}>Votre code : {roomInfo?.code || "En attente..."}</Text>
-
-        <Text style={{fontFamily: "Arciform",}}>Username</Text>
         <TextInput
           placeholder="Votre nom"
           value={username}
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
     marginTop: 75,
-    marginBottom: 75,
+    marginBottom: 75
   },
   gametitle: {
     color: "#EE8383",
@@ -151,7 +152,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingLeft: 50,
     fontFamily: "Arciform",
-    textAlign: "center"
+    textAlign: "center",
+    width: 300
   },
 });
 
