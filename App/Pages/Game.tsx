@@ -13,17 +13,22 @@ const Game = () => {
 
     const [ gameState, setGameState ] = useState<Models.GameState>();
     const [subscription, setSubscription] = useState<Subscription | null>(null);
-    const [ currentAction, setCurrentAction ] = useState<"smatch" | "revers" | "droit" | undefined>()
+    
+    const currentAction = useRef<"smatch" | "revers" | "droit" | undefined>()
     const strikDelay = useRef(0);
 
-    const _subscribe = () => {
-        setSubscription (
-            Accelerometer.addListener(accelerometerData => {
-                strik(accelerometerData);
-            })
-        );
-        Accelerometer.setUpdateInterval(16);
-    };
+    const setCurrentAction = (action: "smatch" | "revers" | "droit" | undefined) => {
+      currentAction.current = action;
+    }
+
+    const _subscribe = useCallback(() => {
+      setSubscription (
+          Accelerometer.addListener(accelerometerData => {
+              strik(accelerometerData);
+          })
+      );
+      Accelerometer.setUpdateInterval(10);
+  }, [])
 
     const _unsubscribe = () => {
         subscription && subscription.remove();
@@ -35,24 +40,25 @@ const Game = () => {
         if (now - strikDelay.current > 500) {
             const { x, y, z } = data;
             const abs = Math.abs(x) + Math.abs(y) + Math.abs(z);
-            if (abs > 3 && currentAction !== undefined) {
+            console.log(abs, currentAction.current)
+            if (abs > 2 && currentAction.current !== undefined) {
                 console.log('strick')
                 strikDelay.current = now;
-                play(currentAction)
+                play(currentAction.current)
             }
         }
     }, [currentAction])
 
     useEffect(() => {
         const getGameStateRes = (res: Models.GetGameStateResponse) => {
-        setGameState(res.state);
+          setGameState(res.state);
         };
         _subscribe();
         socket.emit("GetGameState", null, getGameStateRes);
         socket.on("GameStateChange", gameStateChange);
         return () => {
-        socket.off("GameStateChange", gameStateChange);
-        _unsubscribe();
+            socket.off("GameStateChange", gameStateChange);
+            _unsubscribe();
         };
     }, []);
 
@@ -104,71 +110,45 @@ const Game = () => {
           {gameState?.playersName[0] + " - " + gameState?.playersName[1]}
         </Text>
       </View>
-      <View style={styles.buttonwrapper}>
-        {gameState?.failed && (
-          <Text>
-            {gameState.nextStriker === socket.id ? "Raté..." : "Tour gagné !"}
-          </Text>
-        )}
-        {gameState?.server && gameState.server === socket.id ? (
-          <>
-            <Text>Secouer votre téléphoene pour engager le service</Text>
-            <Button onPress={serv} title="Servir" />
-          </>
-        ) : (
-          <>
-            {!gameState?.failed && gameState?.nextStriker === socket.id && (
-              <Text>
-                {gameState.showedAction
-                  ? actions[gameState?.action]
-                  : "La balle arrive..."}
-              </Text>
+        <View style={styles.buttonwrapper}>
+            { gameState?.failed && <Text>{ gameState.nextStriker === socket.id ? 'Raté...' : 'Tour gagné !' }</Text>}
+            { gameState?.server && gameState.server === socket.id ? (
+                <>
+                    <Text>Secouer votre téléphoene pour engager le service</Text>
+                    <Button onPress={serv} title="servir" />
+                </>
+            ) : (
+                <>
+                    { !gameState?.failed && gameState?.nextStriker === socket.id && (
+                        <Text>{ gameState.showedAction ? actions[gameState?.action] : "la balle arrive..."}</Text>
+                    )}
+                    { !gameState?.failed && gameState?.nextStriker !== socket.id && (
+                        <Text>{ feedbacks[gameState?.feedback] }</Text>
+                    )}
+                    <View style={styles.wrap1}>
+                        <ActionButton 
+                            onTouchStart={() => setCurrentAction('smatch')}
+                            onTouchEnd={() => {}}
+                            text="Smash"
+                        />
+                    </View>
+                    <View style={styles.wrap2}>
+                        <ActionButton
+                            onTouchStart={() => setCurrentAction('revers')}
+                            onTouchEnd={() => {}}
+                            text="Revers"
+                        />
+                    </View>
+                    <View style={styles.wrap3}>
+                        <ActionButton
+                            onTouchStart={() => setCurrentAction('droit')}
+                            onTouchEnd={() => {}}
+                            text="Droit"
+                        />
+                    </View>
+                </>
             )}
-            {!gameState?.failed && gameState?.nextStriker !== socket.id && (
-              <Text>{feedbacks[gameState?.feedback]}</Text>
-            )}
-            <View style={styles.buttonwrapper}>
-                { gameState?.failed && <Text>{ gameState.nextStriker === socket.id ? 'Raté...' : 'Tour gagné !' }</Text>}
-                { gameState?.server && gameState.server === socket.id ? (
-                    <>
-                        <Text>Secouer votre téléphoene pour engager le service</Text>
-                        <Button onPress={serv} title="servir" />
-                    </>
-                ) : (
-                    <>
-                        { !gameState?.failed && gameState?.nextStriker === socket.id && (
-                            <Text>{ gameState.showedAction ? actions[gameState?.action] : "la balle arrive..."}</Text>
-                        )}
-                        { !gameState?.failed && gameState?.nextStriker !== socket.id && (
-                            <Text>{ feedbacks[gameState?.feedback] }</Text>
-                        )}
-                        <View style={styles.wrap1}>
-                            <ActionButton 
-                                onTouchStart={() => setCurrentAction('smatch')}
-                                onTouchEnd={() => {}}
-                                text="Smash"
-                            />
-                        </View>
-                        <View style={styles.wrap2}>
-                            <ActionButton
-                                onTouchStart={() => setCurrentAction('revers')}
-                                onTouchEnd={() => {}}
-                                text="Revers"
-                            />
-                        </View>
-                        <View style={styles.wrap3}>
-                            <ActionButton
-                                onTouchStart={() => setCurrentAction('droit')}
-                                onTouchEnd={() => {}}
-                                text="Droit"
-                            />
-                        </View>
-                    </>
-                )}
-            </View>
-          </>
-        )}
-      </View>
+        </View>
     </View>
   );
 };
