@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Button } from "react-native";
 import ActionButton from "../Components/ActionButton";
 import socket from '../connection'
@@ -12,12 +12,16 @@ const Game = () => {
     const [ gameState, setGameState ] = useState<Models.GameState>()
     const [ showAction, setShowAction ] = useState(false);
 
+    const startTime = useRef(0);
+    const latency = useRef(0);
+
     useEffect(() => {
         const getGameStateRes = (res: Models.GetGameStateResponse) => {
             setGameState(res.state);
         }
         socket.emit('GetGameState', null, getGameStateRes);
         socket.on('GameStateChange', gameStateChange);
+        socket.on('PingResponse', calcPing)
         return () => {
             socket.off('GameStateChange', gameStateChange);
         }
@@ -38,6 +42,10 @@ const Game = () => {
             } else {
                 setShowAction(false)
             }
+
+            // test ping
+            startTime.current = Date.now();
+            socket.emit('GetPing');
         }, 100)
 
         return () => {
@@ -50,7 +58,10 @@ const Game = () => {
         console.log(event)
     }, [setGameState])
 
-    console.log("render")
+    const calcPing = useCallback(() => {
+        latency.current = Date.now() - startTime.current;
+        console.log(latency.current);
+    }, [])
 
     const serv = useCallback(() => {
         if (gameState?.server === socket.id) {
