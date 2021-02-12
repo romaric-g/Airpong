@@ -16,6 +16,7 @@ const Game = () => {
     
     const currentAction = useRef<"smatch" | "revers" | "droit" | undefined>()
     const strikDelay = useRef(0);
+    const nextStriker = useRef<string | undefined>();
 
     const setCurrentAction = (action: "smatch" | "revers" | "droit" | undefined) => {
       currentAction.current = action;
@@ -37,7 +38,7 @@ const Game = () => {
 
     const strik = useCallback( (data: ThreeAxisMeasurement) => {
         const now = Date.now();
-        if (now - strikDelay.current > 500) {
+        if (now - strikDelay.current > 250) {
             const { x, y, z } = data;
             const abs = Math.abs(x) + Math.abs(y) + Math.abs(z);
             console.log(abs, currentAction.current)
@@ -48,6 +49,12 @@ const Game = () => {
             }
         }
     }, [currentAction])
+
+    useEffect(() => {
+      if (gameState?.nextStriker !== nextStriker.current) {
+        nextStriker.current = gameState?.nextStriker;
+      }
+    }, [gameState])
 
     useEffect(() => {
         const getGameStateRes = (res: Models.GetGameStateResponse) => {
@@ -83,7 +90,9 @@ const Game = () => {
 
   const play = useCallback(
     (action: "smatch" | "revers" | "droit") => {
-      if (gameState?.nextStriker === socket.id) {
+      console.log('PLAY')
+      if (nextStriker.current === socket.id) {
+        console.log('YOU YES')
         socket.emit(
           "Play",
           {
@@ -95,10 +104,6 @@ const Game = () => {
     },
     [gameState]
   );
-
-  useEffect(() => {
-    console.log(gameState);
-  }, [gameState]);
 
   return (
     <View style={styles.container}>
