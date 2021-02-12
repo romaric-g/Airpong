@@ -36,6 +36,7 @@ declare namespace Models {
     score: number[],
     feedback: FEEDBACK | undefined,
     action: Action | undefined,
+    showedAction: boolean,
     playersName: (string | undefined)[],
     win?: WinState,
     leave?: boolean

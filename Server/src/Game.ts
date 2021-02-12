@@ -66,6 +66,7 @@ export default class Game {
     private action: Action | undefined;
     private tBStart = 0;
     private tBDuration = 0;
+    private showedAction = false;
 
     private strikTimeout : NodeJS.Timeout | undefined;
 
@@ -141,7 +142,7 @@ export default class Game {
         const tbInterval = props.tbInterval;
         this.tBDuration = tbInterval.min + (Math.random() * (tbInterval.max - tbInterval.min))
 
-        this.strikTimeout = setTimeout(this.fail.bind(this), this.tBDuration + props.tF[2]);
+        this.strikTimeout = setTimeout(() => this.showAction.bind(this)(props.tF[2]), this.tBDuration);
     }
 
     setNextStriker (prevAction: Action, prevFeedback: FEEDBACK) {
@@ -153,7 +154,15 @@ export default class Game {
         if (this.strikTimeout) {
             clearTimeout(this.strikTimeout);
             this.strikTimeout = undefined;
+            this.showedAction = false;
         }
+    }
+
+    showAction (delay: number) {
+        //
+        this.showedAction = true;
+        this.strikTimeout = setTimeout(this.fail.bind(this), delay);
+        this.room.dispatchNewGameState();
     }
 
     fail () {
@@ -218,6 +227,7 @@ export default class Game {
             tFDuration: this.action ? ActionsProperties[this.action].tF[2] : 0,
             feedback: this.feedback,
             action: this.action,
+            showedAction: this.showedAction,
             score: this.scores,
             playersName: this.room.getPlayersName()
         };

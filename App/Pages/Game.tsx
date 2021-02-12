@@ -9,11 +9,7 @@ const feedbacks = [ "Excelent !", "Super !", "ça passe..."]
 
 const Game = () => {
 
-    const [ gameState, setGameState ] = useState<Models.GameState>()
-    const [ showAction, setShowAction ] = useState(false);
-
-    const startTime = useRef(0);
-    const latency = useRef(0);
+    const [ gameState, setGameState ] = useState<Models.GameState>();
 
     useEffect(() => {
         const getGameStateRes = (res: Models.GetGameStateResponse) => {
@@ -21,47 +17,15 @@ const Game = () => {
         }
         socket.emit('GetGameState', null, getGameStateRes);
         socket.on('GameStateChange', gameStateChange);
-        socket.on('PingResponse', calcPing)
         return () => {
             socket.off('GameStateChange', gameStateChange);
         }
     }, [])
 
-    useEffect(() => {
-
-        const interval = setInterval(() => {
-           
-            const time = new Date().getTime();
-
-            if (gameState?.nextStriker === socket.id && !gameState.failed) {
-                if (gameState.tBStart + gameState.tBDuration <= time) {
-                    setShowAction(true)
-                } else {
-                    setShowAction(false)
-                }
-            } else {
-                setShowAction(false)
-            }
-
-            // test ping
-            startTime.current = Date.now();
-            socket.emit('GetPing');
-        }, 100)
-
-        return () => {
-            clearInterval(interval);
-        }
-    }, [gameState])
-
     const gameStateChange = useCallback((event: Models.GameStateChangeEvent) => {
         setGameState(event.state)
         console.log(event)
     }, [setGameState])
-
-    const calcPing = useCallback(() => {
-        latency.current = Date.now() - startTime.current;
-        console.log(latency.current);
-    }, [])
 
     const serv = useCallback(() => {
         if (gameState?.server === socket.id) {
@@ -104,7 +68,7 @@ const Game = () => {
                 ) : (
                     <>
                         { !gameState?.failed && gameState?.nextStriker === socket.id && (
-                            <Text>{ showAction ? actions[gameState?.action] : "la balle arrive..."}</Text>
+                            <Text>{ gameState.showedAction ? actions[gameState?.action] : "la balle arrive..."}</Text>
                         )}
                         { !gameState?.failed && gameState?.nextStriker !== socket.id && (
                             <Text>{ feedbacks[gameState?.feedback] }</Text>
