@@ -10,9 +10,9 @@ import {
 import { NativeRouter, Route, Link, useHistory } from "react-router-native";
 import * as Font from 'expo-font';
 import { useFonts } from 'expo-font';
-// import Home from "./Pages/Home";
-// import Room from "./Pages/Room";
-// import Game from "./Pages/Game";
+import Home from "./Pages/Home";
+import Room from "./Pages/Room";
+import Game from "./Pages/Game";
 import AppLoading from "expo-app-loading";
 
 const App = () => {
@@ -47,24 +47,6 @@ const App = () => {
   </NativeRouter>
   );
 };
-
-const Home = () => (
-  <View>
-    <Text>Home</Text>
-  </View>
-)
-
-const Room = () => (
-  <View>
-    <Text>Room</Text>
-  </View>
-)
-
-const Game = () => (
-  <View>
-    <Text>Game</Text>
-  </View>
-)
 
 const styles = StyleSheet.create({
   container: {
