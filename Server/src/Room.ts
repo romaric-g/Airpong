@@ -145,7 +145,7 @@ export default class Room {
         console.log(this.canAutoStart(), "OUI")
         console.log(this.startTimer)
         if (this.startTimer === undefined && this.canAutoStart()) {
-            startTimer(1);
+            startTimer(10);
         }
     }
 }
