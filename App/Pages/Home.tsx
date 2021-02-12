@@ -7,7 +7,7 @@ import socket from "../connection";
 import Models from "../Types/models";
 
 const Home = () => {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("Noname");
 
   const [codeInput, setCodeInput] = useState("");
 
