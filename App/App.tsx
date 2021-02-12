@@ -1,14 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { Button, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { NativeRouter, Route, Link, useHistory } from "react-router-native";
-import Home from './Pages/Home';
-import Room from './Pages/Room';
-import Game from './Pages/Game';
+import * as Font from 'expo-font';
+import { useFonts } from 'expo-font';
+import Home from "./Pages/Home";
+import Room from "./Pages/Room";
+import Game from "./Pages/Game";
 
 const App = () => {
+
+
+  const [loaded] = useFonts({
+    Arciform: require('./assets/fonts/Arciform.ttf'),
+  });
+  
+  if (!loaded) {
+    return null;
+  }
+  
   const history = useHistory();
 
-  return (
+    return (
     <NativeRouter>
       <StatusBar hidden />
       <View>
@@ -29,14 +48,14 @@ const App = () => {
       </View>
     </NativeRouter>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
   text: {
     color: "#fff",
     fontSize: 20,
+    fontFamily: "Arciform",
   },
   wrapperCustom: {
     borderRadius: 15,
