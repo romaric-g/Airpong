@@ -13,40 +13,38 @@ import { useFonts } from 'expo-font';
 import Home from "./Pages/Home";
 import Room from "./Pages/Room";
 import Game from "./Pages/Game";
+import AppLoading from "expo-app-loading";
 
 const App = () => {
 
-
-  const [loaded] = useFonts({
+  const [ loaded ] = useFonts({
     Arciform: require('./assets/fonts/Arciform.ttf'),
   });
   
   if (!loaded) {
-    return null;
+    return <AppLoading />;
   }
-  
-  const history = useHistory();
 
-    return (
-    <NativeRouter>
-      <StatusBar hidden />
-      <View>
-        <Link to="/" underlayColor="#f0f4f7">
-          <Text>Home</Text>
-        </Link>
-        <Link to="/room" underlayColor="#f0f4f7">
-          <Text>Room</Text>
-        </Link>
-        <Link to="/game" underlayColor="#f0f4f7">
-          <Text>Game</Text>
-        </Link>
-      </View>
-      <View style={styles.container}>
-        <Route exact path="/" component={Home} />
-        <Route path="/room" component={Room} />
-        <Route path="/game" component={Game} />
-      </View>
-    </NativeRouter>
+  return (
+  <NativeRouter>
+    <StatusBar hidden />
+    <View>
+      <Link to="/" underlayColor="#f0f4f7">
+        <Text>Home</Text>
+      </Link>
+      <Link to="/room" underlayColor="#f0f4f7">
+        <Text>Room</Text>
+      </Link>
+      <Link to="/game" underlayColor="#f0f4f7">
+        <Text>Game</Text>
+      </Link>
+    </View>
+    <View style={styles.container}>
+      <Route exact path="/" component={Home} />
+      <Route path="/room" component={Room} />
+      <Route path="/game" component={Game} />
+    </View>
+  </NativeRouter>
   );
 };
 

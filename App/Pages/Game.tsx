@@ -26,7 +26,7 @@ const Game = () => {
     };
 
     const _unsubscribe = () => {
-        if (subscription) subscription.remove();
+        subscription && subscription.remove();
         setSubscription(null);
     };
 
@@ -45,19 +45,17 @@ const Game = () => {
     }, [currentAction])
 
     useEffect(() => {
+        const getGameStateRes = (res: Models.GetGameStateResponse) => {
+        setGameState(res.state);
+        };
         _subscribe();
-        return () => _unsubscribe();
-    }, []);  
-  useEffect(() => {
-    const getGameStateRes = (res: Models.GetGameStateResponse) => {
-      setGameState(res.state);
-    };
-    socket.emit("GetGameState", null, getGameStateRes);
-    socket.on("GameStateChange", gameStateChange);
-    return () => {
-      socket.off("GameStateChange", gameStateChange);
-    };
-  }, []);
+        socket.emit("GetGameState", null, getGameStateRes);
+        socket.on("GameStateChange", gameStateChange);
+        return () => {
+        socket.off("GameStateChange", gameStateChange);
+        _unsubscribe();
+        };
+    }, []);
 
   const gameStateChange = useCallback(
     (event: Models.GameStateChangeEvent) => {
