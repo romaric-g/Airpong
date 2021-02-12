@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     flex: 1,
     justifyContent: "center",
+    maxWidth: 500
   },
 });
 
