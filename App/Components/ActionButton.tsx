@@ -1,5 +1,5 @@
-import React from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
+import React from "react";
+import { Pressable, Text, StyleSheet } from "react-native";
 
 interface Props {
     text: string,
@@ -8,31 +8,30 @@ interface Props {
 }
 
 const ActionButton = ({ text, onTouchStart, onTouchEnd }: Props) => {
-    return (
-        <Pressable
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-            style={({ pressed }) => [
+  return (
+    <Pressable
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        style={({ pressed }) => [
             {
-                backgroundColor: pressed ? "#FFA8A8" : "#efefef",
+            backgroundColor: pressed ? "#FFA8A8" : "#efefef",
             },
             styles.actionbutton,
-            ]}
-        >
-            <Text style={{ color: "#000" }}>{ text }</Text>
-        </Pressable>
-    )
-}
+        ]}
+    >
+      <Text style={{ color: "#000", fontFamily: "Arciform" }}>{text}</Text>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
-    actionbutton: {
-      alignItems: "center",
-      justifyContent: "center",
-      height: 100,
-      width: 100,
-      borderRadius: 50,
-    }
+  actionbutton: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+  },
 });
-  
 
 export default ActionButton;

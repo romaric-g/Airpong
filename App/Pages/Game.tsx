@@ -3,11 +3,11 @@ import { View, Text, StyleSheet, Pressable, Button } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from 'expo-sensors';
 import { Subscription } from '@unimodules/core';
 import ActionButton from "../Components/ActionButton";
-import socket from '../connection'
+import socket from "../connection";
 import Models from "../Types/models";
 
-const actions = [ "Smatch", "Revers", "Coup droit"];
-const feedbacks = [ "Excelent !", "Super !", "ça passe..."]
+const actions = ["Smash", "Revers", "Coup droit"];
+const feedbacks = ["Excellent !", "Super !", "Ça passe..."];
 
 const Game = () => {
 
@@ -48,54 +48,93 @@ const Game = () => {
         _subscribe();
         return () => _unsubscribe();
     }, []);  
+  useEffect(() => {
+    const getGameStateRes = (res: Models.GetGameStateResponse) => {
+      setGameState(res.state);
+    };
+    socket.emit("GetGameState", null, getGameStateRes);
+    socket.on("GameStateChange", gameStateChange);
+    return () => {
+      socket.off("GameStateChange", gameStateChange);
+    };
+  }, []);
 
-    useEffect(() => {
-        const getGameStateRes = (res: Models.GetGameStateResponse) => {
-            setGameState(res.state);
+  const gameStateChange = useCallback(
+    (event: Models.GameStateChangeEvent) => {
+      setGameState(event.state);
+      console.log(event);
+    },
+    [setGameState]
+  );
+
+  const serv = useCallback(() => {
+    if (gameState?.server === socket.id) {
+      socket.emit(
+        "Play",
+        {
+          action: "serv",
+        } as Models.PlayParams,
+        (event: any) => {
+          console.log(event);
         }
-        socket.emit('GetGameState', null, getGameStateRes);
-        socket.on('GameStateChange', gameStateChange);
-        return () => {
-            socket.off('GameStateChange', gameStateChange);
-        }
-    }, [])
+      );
+    }
+  }, [gameState]);
 
-    const gameStateChange = useCallback((event: Models.GameStateChangeEvent) => {
-        setGameState(event.state)
-        console.log(event)
-    }, [setGameState])
+  const play = useCallback(
+    (action: "smatch" | "revers" | "droit") => {
+      if (gameState?.nextStriker === socket.id) {
+        socket.emit(
+          "Play",
+          {
+            action: action,
+          } as Models.PlayParams,
+          (event: any) => {
+            console.log(event);
+          }
+        );
+      }
+    },
+    [gameState]
+  );
 
-    const serv = useCallback(() => {
-        if (gameState?.server === socket.id) {
-            socket.emit("Play", {
-                action: 'serv'
-            } as Models.PlayParams, (event: any) => {
-                console.log(event)
-            })
-        }
-    }, [gameState])
+  useEffect(() => {
+    console.log(gameState);
+  }, [gameState]);
 
-    const play = useCallback((action: "smatch" | "revers" | "droit") => {
-        if (gameState?.nextStriker === socket.id) {
-            socket.emit("Play", {
-                action: action
-            } as Models.PlayParams, (event: any) => {
-                console.log(event)
-            })
-        }
-    }, [gameState])
-
-
-    useEffect(() => {
-        console.log(gameState)
-    }, [gameState])
-
-    return (
-        <View style={styles.container}>
-            <View style={styles.wrapper}>
-                <Text style={styles.score}>{gameState?.score[0] + ' - ' + gameState?.score[1] }</Text>
-                <Text style={styles.names}>{gameState?.playersName[0] + ' - ' + gameState?.playersName[1] }</Text>
-            </View>
+  return (
+    <View style={styles.container}>
+      <View style={styles.wrapper}>
+        <Text style={styles.score}>
+          {gameState?.score[0] + " - " + gameState?.score[1]}
+        </Text>
+        <Text style={styles.names}>
+          {gameState?.playersName[0] + " - " + gameState?.playersName[1]}
+        </Text>
+      </View>
+      <View style={styles.buttonwrapper}>
+        {gameState?.failed && (
+          <Text>
+            {gameState.nextStriker === socket.id ? "Raté..." : "Tour gagné !"}
+          </Text>
+        )}
+        {gameState?.server && gameState.server === socket.id ? (
+          <>
+            <Text>Secouer votre téléphoene pour engager le service</Text>
+            <Button onPress={serv} title="Servir" />
+          </>
+        ) : (
+          <>
+            {!gameState?.failed && gameState?.nextStriker === socket.id && (
+              <Text>
+                {gameState.showedAction
+                  ? actions[gameState?.action]
+                  : "La balle arrive..."}
+              </Text>
+            )}
+            {!gameState?.failed && gameState?.nextStriker !== socket.id && (
+              <Text>{feedbacks[gameState?.feedback]}</Text>
+            )}
             <View style={styles.buttonwrapper}>
                 { gameState?.failed && <Text>{ gameState.nextStriker === socket.id ? 'Raté...' : 'Tour gagné !' }</Text>}
                 { gameState?.server && gameState.server === socket.id ? (
@@ -135,8 +174,11 @@ const Game = () => {
                     </>
                 )}
             </View>
-        </View>
-    );
+          </>
+        )}
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -155,29 +197,38 @@ const styles = StyleSheet.create({
   },
   score: {
     fontSize: 48,
+    fontFamily: "Arciform",
   },
   names: {
     fontSize: 20,
+    fontFamily: "Arciform",
   },
   wrap1: {
     flex: 1,
+    alignItems: "center",
     flexDirection: "row",
-    alignSelf: "flex-start"
+    justifyContent: "flex-end",
   },
   wrap2: {
     flex: 1,
+    alignItems: "center",
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   wrap3: {
     flex: 1,
+    alignItems: "center",
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "flex-start",
   },
-  buttonwrapper:{
+  buttonwrapper: {
+    width: "100%",
+    paddingRight: 40,
+    paddingLeft: 50,
+    alignContent: "center",
     flex: 1,
-    alignItems: "center"
-  }
+    justifyContent: "center",
+  },
 });
 
 export default Game;

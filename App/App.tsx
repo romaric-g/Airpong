@@ -31,7 +31,7 @@ const App = () => {
     <NativeRouter>
       <StatusBar hidden />
       <View>
-        <Link to="/" underlayColor="#f0f4f7">
+        {/* <Link to="/" underlayColor="#f0f4f7">
           <Text>Home</Text>
         </Link>
         <Link to="/room" underlayColor="#f0f4f7">
@@ -39,7 +39,7 @@ const App = () => {
         </Link>
         <Link to="/game" underlayColor="#f0f4f7">
           <Text>Game</Text>
-        </Link>
+        </Link> */}
       </View>
       <View style={styles.container}>
         <Route exact path="/" component={Home} />
