@@ -31,6 +31,11 @@ export default class Player {
         this.socket.on('QuitRoom', pc.quitRoom.bind(pc))
         this.socket.on('GetGameState', pc.getGameState.bind(pc))
         this.socket.on('Play', pc.play.bind(pc))
+
+
+        this.socket.on('GetPing', function() {
+            socket.emit('PingResponse');
+        });
     }
 
     setName(name: string) : void {
