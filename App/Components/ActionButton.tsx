@@ -10,8 +10,8 @@ interface Props {
 const ActionButton = ({ text, onTouchStart, onTouchEnd }: Props) => {
   return (
     <Pressable
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
+        onPressIn={onTouchStart}
+        onPressOut={onTouchEnd}
         style={({ pressed }) => [
             {
             backgroundColor: pressed ? "#FFA8A8" : "#efefef",
