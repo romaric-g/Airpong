@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, Button, TextInput, StyleSheet } from "react-native";
+import { View, Text, Button, TextInput, StyleSheet, Pressable } from "react-native";
 import { useHistory } from "react-router";
 import NormalButton from "../Components/NormalButton";
 import NormalButtonWhite from "../Components/NormalButtonWhite";
@@ -9,7 +9,6 @@ import Models from "../Types/models";
 const Home = () => {
 
     const history = useHistory();
-
 
     const [username, setUsername] = useState("Noname");
     const [codeInput, setCodeInput] = useState("");
@@ -71,37 +70,36 @@ const Home = () => {
     return !roomInfo || roomInfo.alone ? (
         <View style={styles.container}>
         <Text style={styles.gametitle}>Airpong</Text>
-
         <View style={styles.container2}>
             <NormalButton title="Lancer la recherche" onPress={joinRandom} />
 
             <Text
-            style={{
-                fontFamily: "Arciform",
-            }}
+                style={{
+                    fontFamily: "Arciform"
+                }}
             >
-            ou
+                ou
             </Text>
 
-            <View style={{alignItems: "center"}}>
+            <View style={{alignItems: "center", flexDirection: "column", marginVertical: 40}}>
                 <TextInput
-                placeholder="Rentrer un code ami"
-                value={codeInput}
-                onChangeText={(text) => setCodeInput(text.toUpperCase())}
-                autoCapitalize="characters"
-                maxLength={6}
-                onSubmitEditing={joinPrivate}
-                style={styles.input}
+                    placeholder="Rentrer un code ami"
+                    onChangeText={(text) => setCodeInput(text)}
+                    value={codeInput}
+                    autoCapitalize="characters"
+                    maxLength={6}
+                    onSubmitEditing={joinPrivate}
+                    style={styles.input}
                 />
         
                 <Text style={{fontFamily: "Arciform", color: "#a5a5a5"}}>Votre code : {roomInfo?.code || "En attente..."}</Text>
             </View>
 
             <TextInput
-            placeholder="Votre nom"
-            value={username}
-            onChangeText={(text) => setUsername(text.toUpperCase())}
-            style={styles.input}
+                placeholder="Votre nom"
+                onChangeText={(text) => setUsername(text)}
+                value={username}
+                style={styles.input}
             />
         </View>
         </View>
@@ -147,10 +145,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: "#FFE1E1",
     borderRadius: 15,
-    paddingTop: 10,
-    paddingRight: 50,
-    paddingBottom: 10,
-    paddingLeft: 50,
+    height: 50,
     fontFamily: "Arciform",
     textAlign: "center",
     width: 300

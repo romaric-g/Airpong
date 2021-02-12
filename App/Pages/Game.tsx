@@ -35,7 +35,6 @@ const Game = () => {
         if (now - strikDelay.current > 500) {
             const { x, y, z } = data;
             const abs = Math.abs(x) + Math.abs(y) + Math.abs(z);
-            console.log(abs, currentAction);
             if (abs > 3 && currentAction !== undefined) {
                 console.log('strick')
                 strikDelay.current = now;
@@ -60,7 +59,6 @@ const Game = () => {
   const gameStateChange = useCallback(
     (event: Models.GameStateChangeEvent) => {
       setGameState(event.state);
-      console.log(event);
     },
     [setGameState]
   );
@@ -72,9 +70,7 @@ const Game = () => {
         {
           action: "serv",
         } as Models.PlayParams,
-        (event: any) => {
-          console.log(event);
-        }
+        (event: any) => { }
       );
     }
   }, [gameState]);
@@ -87,9 +83,7 @@ const Game = () => {
           {
             action: action,
           } as Models.PlayParams,
-          (event: any) => {
-            console.log(event);
-          }
+          (event: any) => { }
         );
       }
     },

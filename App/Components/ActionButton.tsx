@@ -3,8 +3,8 @@ import { Pressable, Text, StyleSheet } from "react-native";
 
 interface Props {
     text: string,
-    onTouchStart?: () => void,
-    onTouchEnd?: () => void,
+    onTouchStart: () => void,
+    onTouchEnd: () => void,
 }
 
 const ActionButton = ({ text, onTouchStart, onTouchEnd }: Props) => {
