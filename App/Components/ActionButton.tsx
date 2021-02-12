@@ -3,13 +3,15 @@ import { Pressable, Text, StyleSheet } from 'react-native';
 
 interface Props {
     text: string,
-    onPress?: () => void
+    onTouchStart?: () => void,
+    onTouchEnd?: () => void,
 }
 
-const ActionButton = ({ text, onPress }: Props) => {
+const ActionButton = ({ text, onTouchStart, onTouchEnd }: Props) => {
     return (
         <Pressable
-            onPress={onPress}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
             style={({ pressed }) => [
             {
                 backgroundColor: pressed ? "#FFA8A8" : "#efefef",

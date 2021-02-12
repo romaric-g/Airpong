@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Button } from "react-native";
+import { Accelerometer, ThreeAxisMeasurement } from 'expo-sensors';
+import { Subscription } from '@unimodules/core';
 import ActionButton from "../Components/ActionButton";
 import socket from '../connection'
 import Models from "../Types/models";
@@ -10,6 +12,42 @@ const feedbacks = [ "Excelent !", "Super !", "ça passe..."]
 const Game = () => {
 
     const [ gameState, setGameState ] = useState<Models.GameState>();
+    const [subscription, setSubscription] = useState<Subscription | null>(null);
+    const [ currentAction, setCurrentAction ] = useState<"smatch" | "revers" | "droit" | undefined>()
+    const strikDelay = useRef(0);
+
+    const _subscribe = () => {
+        setSubscription (
+            Accelerometer.addListener(accelerometerData => {
+                strik(accelerometerData);
+            })
+        );
+        Accelerometer.setUpdateInterval(16);
+    };
+
+    const _unsubscribe = () => {
+        if (subscription) subscription.remove();
+        setSubscription(null);
+    };
+
+    const strik = useCallback( (data: ThreeAxisMeasurement) => {
+        const now = Date.now();
+        if (now - strikDelay.current > 500) {
+            const { x, y, z } = data;
+            const abs = Math.abs(x) + Math.abs(y) + Math.abs(z);
+            console.log(abs, currentAction);
+            if (abs > 3 && currentAction !== undefined) {
+                console.log('strick')
+                strikDelay.current = now;
+                play(currentAction)
+            }
+        }
+    }, [currentAction])
+
+    useEffect(() => {
+        _subscribe();
+        return () => _unsubscribe();
+    }, []);  
 
     useEffect(() => {
         const getGameStateRes = (res: Models.GetGameStateResponse) => {
@@ -75,19 +113,22 @@ const Game = () => {
                         )}
                         <View style={styles.wrap1}>
                             <ActionButton 
-                                onPress={() => play('smatch')}
+                                onTouchStart={() => setCurrentAction('smatch')}
+                                onTouchEnd={() => {}}
                                 text="Smash"
                             />
                         </View>
                         <View style={styles.wrap2}>
                             <ActionButton
-                                onPress={() => play('revers')}
+                                onTouchStart={() => setCurrentAction('revers')}
+                                onTouchEnd={() => {}}
                                 text="Revers"
                             />
                         </View>
                         <View style={styles.wrap3}>
                             <ActionButton
-                                onPress={() => play('droit')}
+                                onTouchStart={() => setCurrentAction('droit')}
+                                onTouchEnd={() => {}}
                                 text="Droit"
                             />
                         </View>
