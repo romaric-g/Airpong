@@ -31,7 +31,7 @@ const ActionsProperties: Record<Action, ActionProperties> = [
             min: 500,
             max: 1500
         },
-        tF: [500, 750, 1000],
+        tF: [700, 1250, 2000],
         nextproba: [0.1, 0.2, 0.3]
     },
     {
@@ -39,7 +39,7 @@ const ActionsProperties: Record<Action, ActionProperties> = [
             min: 1500,
             max: 3000
         },
-        tF: [600, 1000, 1500],
+        tF: [900, 1750, 2500],
         nextproba: [0.3, 0.4, 0.5]
     },
     {
@@ -47,7 +47,7 @@ const ActionsProperties: Record<Action, ActionProperties> = [
             min: 3000,
             max: 5000
         },
-        tF: [800, 1500, 2000],
+        tF: [1100, 2000, 3000],
         nextproba: [0.6, 0.4, 0.2]
     }
 ]
