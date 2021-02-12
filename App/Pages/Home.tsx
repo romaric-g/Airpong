@@ -75,17 +75,25 @@ const Home = () => {
 
   return !roomInfo || roomInfo.alone ? (
     <View style={styles.container}>
-      <Text style={styles.gametitle}>Airpong</Text>
-      <NormalButton title="Lancer la recherche" onPress={joinRandom} />
-
-      <Text style={{ fontFamily: "Arciform" }}>ou</Text>
-
+      <View style={styles.header}>
+        <Text style={styles.gametitle}>Airpong</Text>
+        
+        <TextInput
+            placeholder="Votre nom"
+            onChangeText={(text) => setUsername(text)}
+            value={username}
+            style={[styles.input, styles.inputname]}
+        />
+      </View>
       <View
         style={{
           alignItems: "center",
           flexDirection: "column",
         }}
       >
+        <NormalButton title="Lancer la recherche" onPress={joinRandom} />
+        <Text style={{ fontFamily: "Arciform", marginVertical: 10 }}>ou</Text>
+
         <TextInput
           placeholder="Rentrer un code ami"
           onChangeText={(text) => setCodeInput(text)}
@@ -96,16 +104,9 @@ const Home = () => {
           style={styles.input}
         />
 
-        <Text style={{ fontFamily: "Arciform", color: "#a5a5a5" }}>
+        <Text style={{ fontFamily: "Arciform", color: "#a5a5a5" , marginTop: 3 }}>
           Votre code : {roomInfo?.code || "En attente..."}
         </Text>
-
-        <TextInput
-          placeholder="Votre nom"
-          onChangeText={(text) => setUsername(text)}
-          value={username}
-          style={styles.input}
-        />
       </View>
     </View>
   ) : (
@@ -132,9 +133,16 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     marginTop: 120,
     marginBottom: 120,
+  },
+  header: {
+    width: 300,
+    marginBottom: 50,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   container2: {
     alignItems: "center",
@@ -150,11 +158,15 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: "#FFE1E1",
     borderRadius: 15,
-    height: 50,
+    height: 52,
     fontFamily: "Arciform",
     textAlign: "center",
     width: 300,
   },
+  inputname: {
+    width: '50%',
+    marginVertical: 20,
+  }
 });
 
 const stylesRoom = StyleSheet.create({

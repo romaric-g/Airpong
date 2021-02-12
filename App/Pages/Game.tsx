@@ -41,9 +41,8 @@ const Game = () => {
         if (now - strikDelay.current > 250) {
             const { x, y, z } = data;
             const abs = Math.abs(x) + Math.abs(y) + Math.abs(z);
-            console.log(abs, currentAction.current)
             if (abs > 2 && currentAction.current !== undefined) {
-                console.log('strick')
+                console.log('strick', currentAction.current)
                 strikDelay.current = now;
                 play(currentAction.current)
             }
@@ -92,7 +91,7 @@ const Game = () => {
     (action: "smatch" | "revers" | "droit") => {
       console.log('PLAY')
       if (nextStriker.current === socket.id) {
-        console.log('YOU YES')
+        console.log('YOU')
         socket.emit(
           "Play",
           {

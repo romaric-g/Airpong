@@ -24,10 +24,6 @@ const NormalButton = ({title, onPress}: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
   text: {
     color: "#fff",
     fontSize: 20,
@@ -36,9 +32,9 @@ const styles = StyleSheet.create({
   },
   wrapperCustom: {
     borderRadius: 15,
-    paddingTop: 20,
+    paddingTop: 15,
     paddingRight: 50,
-    paddingBottom: 20,
+    paddingBottom: 15,
     paddingLeft: 50,
     width: 300,
   },
